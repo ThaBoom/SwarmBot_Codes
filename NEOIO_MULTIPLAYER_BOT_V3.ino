@@ -306,19 +306,22 @@ void loop() {
 //BUMP INPUT CODES
 ///////////////////////////////////////////////////////////////////////////
 
-  else if ((results.value == 0xFFE21D) && (stopFlag == false)) {//BUMP RIGHT
+      else if ((results.value == 0xFFE21D) && (stopFlag == false)) {//BUMP RIGHT
     goRight();
-    delay(250);
+    delay(500);
     stopFlag = true;
+    results.value = 0xFFC23D;
 }
   else if ((results.value == 0xFFA25D) && (stopFlag == false)) {//BUMP LEFT
     goLeft();
-    delay(250);
+    delay(500);
     stopFlag = true;
+    results.value = 0xFFC23D;
 }
   else if ((results.value == 0xFF629D) && (stopFlag == false)) {//STALL
     goBack();
     delay(500);
     stopFlag = true;
+    results.value = 0xFFC23D;
   }
-  }
+}
