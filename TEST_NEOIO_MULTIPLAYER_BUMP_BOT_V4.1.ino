@@ -56,8 +56,8 @@ const long botSTOP_RB = 16716015;
 const long botSTOP_RG = 16726215;
 const long botSTOP_BG = 16734885;
 const long BUMP_LEFT = 16753245;
-const long STALL = 16736925;
-const long BUMP_RIGHT = 16769565;
+const long STALL = 16769565;
+const long BUMP_RIGHT = 16736925;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
