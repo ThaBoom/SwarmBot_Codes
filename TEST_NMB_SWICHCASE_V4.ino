@@ -248,6 +248,8 @@ void setup() {
 
 
 void loop() {
+  sensorRead();
+  Serial.println(results.value);
   if (irrecv.decode(&results)) { // decode the received signal and store it in results
     if (results.value == 0xFFFFFFFF) { // if the value is equal to 0xFFFFFFFF
       results.value = key_value; // set the value to the key value
