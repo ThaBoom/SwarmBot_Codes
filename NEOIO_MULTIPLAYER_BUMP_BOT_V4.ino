@@ -46,8 +46,22 @@ const int stuckDistance = 10;
 IRrecv irrecv(irPin);
 decode_results results;
 boolean stopFlag = false;
-////////////////////////////////////////////
-///////////////////////////////////////////
+
+//Control IR numbers
+const long ACTIVATION = 16761405;
+const long botSTOP_R = 16724175;
+const long botSTOP_G = 16718055;
+const long botSTOP_B = 16743045;
+const long botSTOP_RB = 16716015;
+const long botSTOP_RG = 16726215;
+const long botSTOP_BG = 16734885;
+const long BUMP_LEFT = 16753245;
+const long STALL = 16736925;
+const long BUMP_RIGHT = 16769565;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void stopCar_RED () {
   digitalWrite(motorForwardLeft, LOW);
@@ -212,12 +226,12 @@ void sensorRead () {
   durationRight = pulseIn(echoPinRight, HIGH);
   distanceRight = durationRight * 0.034 / 2;
 
-  Serial.print("Left Sensor: ");
-  Serial.println(distanceLeft);
-  Serial.print("Right Sensor: ");
-  Serial.println(distanceRight);
-  Serial.print("Front Sensor: ");
-  Serial.println(distanceFront);
+//  Serial.print("Left Sensor: ");
+//  Serial.println(distanceLeft);
+//  Serial.print("Right Sensor: ");
+//  Serial.println(distanceRight);
+//  Serial.print("Front Sensor: ");
+//  Serial.println(distanceFront);
 
 
 }
@@ -244,6 +258,10 @@ void setup() {
   Serial.begin(9600);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 void loop() {
   sensorRead();
   Serial.println(results.value);
@@ -251,9 +269,8 @@ void loop() {
     irrecv.resume();
   }
 
-
-  if (results.value == 0xFFC23D) {  // BOT ACTIVATION 
-      stopFlag = false;
+  if (results.value == ACTIVATION) {  // BOT ACTIVATION 
+      stopFlag == false;
     if ((distanceFront <= minFrontDistance) || (distanceLeft <= minSideDistance) || (distanceRight <= minSideDistance)) {
       if ((distanceLeft < stuckDistance) || (distanceRight < stuckDistance) || (distanceFront < stuckDistance)) {
         goBack();
@@ -277,51 +294,51 @@ void loop() {
     else
       goForwardFull();
   }
-  else if ((results.value == 0xFF30CF) && (stopFlag == false)) {//BUTTON 1
+  else if ((results.value == botSTOP_R) && (stopFlag == false)) {//BUTTON 1
     stopCar_RED();
-    stopFlag = true;
+    stopFlag == true;
 }
-  else if ((results.value == 0xFF18E7) && (stopFlag == false)) {//BUTTON 2
+  else if ((results.value == botSTOP_G) && (stopFlag == false)) {//BUTTON 2
     stopCar_GREEN();
-    stopFlag = true;
+    stopFlag == true;
 }
-  else if ((results.value ==0xFF7A85 ) && (stopFlag == false)) {//BUTTON 3
+  else if ((results.value ==botSTOP_B ) && (stopFlag == false)) {//BUTTON 3
     stopCar_BLUE();
-    stopFlag = true;
+    stopFlag == true;
 }
-  else if ((results.value == 0xFF10EF) && (stopFlag == false)) {//BUTTON 4
+  else if ((results.value == botSTOP_RB) && (stopFlag == false)) {//BUTTON 4
     stopCar_RED_BLUE();
-    stopFlag = true;
+    stopFlag == true;
 }
-  else if ((results.value == 0xFF38C7) && (stopFlag == false)) {//BUTTON 5
+  else if ((results.value == botSTOP_RG) && (stopFlag == false)) {//BUTTON 5
     stopCar_RED_GREEN();
-    stopFlag = true;
+    stopFlag == true;
 }
-  else if ((results.value == 0xFF5AA5) && (stopFlag == false)) {//BUTTON 6
+  else if ((results.value == botSTOP_BG) && (stopFlag == false)) {//BUTTON 6
     stopCar_BLUE_GREEN();
-    stopFlag = true;
+    stopFlag == true;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 //BUMP INPUT CODES
 ///////////////////////////////////////////////////////////////////////////
 
-    else if ((results.value == 0xFFE21D) && (stopFlag == false)) {//BUMP RIGHT
+    else if ((results.value == BUMP_LEFT) && (stopFlag == false)) {//BUMP RIGHT
     goRight();
     delay(500);
-    stopFlag = true;
-    results.value = 0xFFC23D;
+    stopFlag == true;
+    results.value = ACTIVATION;
 }
-  else if ((results.value == 0xFFA25D) && (stopFlag == false)) {//BUMP LEFT
+  else if ((results.value == BUMP_RIGHT) && (stopFlag == false)) {//BUMP LEFT
     goLeft();
     delay(500);
-    stopFlag = true;
-    results.value = 0xFFC23D;
+    stopFlag == true;
+    results.value = ACTIVATION;
 }
-  else if ((results.value == 0xFF629D) && (stopFlag == false)) {//STALL
+  else if ((results.value == STALL) && (stopFlag == false)) {//STALL
     goBack();
     delay(500);
-    stopFlag = true;
-    results.value = 0xFFC23D;
+    stopFlag == true;
+    results.value = ACTIVATION;
   }
 }
