@@ -249,11 +249,17 @@ void loop() {
   sensorRead();
   Serial.println(results.value);
   if (irrecv.decode(&results)) { // decode the received signal and store it in results
+        irrecv.resume();
     if (results.value == 0xFFFFFFFF) { // if the value is equal to 0xFFFFFFFF
       results.value = key_value; // set the value to the key value
+      if (irrecv.decode(&results)) {
+    unsigned long res;
+    res = results.value, DEC;
+
+}
     }
-    switch (results.value) { // compare the value to the following cases
-      case 0xFFC23D:
+    switch (results.value) { 
+  case 0xFFC23D:
         Serial.println("BOT ACTIVATION");
         if ((distanceFront <= minFrontDistance) || (distanceLeft <= minSideDistance) || (distanceRight <= minSideDistance)) {
          if ((distanceLeft < stuckDistance) || (distanceRight < stuckDistance) || (distanceFront < stuckDistance)) {
@@ -313,21 +319,18 @@ void loop() {
         Serial.println("BUMP_LEFT");
             goLeft();
              delay(500);
-              results.value = 0xFFC23D;
         break ;
         
       case 0xFFE21D:
         Serial.println("BUMP_RIGHT");
             goRight();
               delay(500);
-                results.value = 0xFFC23D;
         break ;
 
       case 0xFF629D:
         Serial.println("STALL");
             goBack();
               delay(500);
-                results.value = 0xFFC23D;
         break ;
           default:
         break;
