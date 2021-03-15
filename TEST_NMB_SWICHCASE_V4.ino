@@ -46,6 +46,7 @@ const int stuckDistance = 10;
 #include <IRremote.h>
 IRrecv irrecv(irPin);
 decode_results results;
+unsigned long key_value = 0;
 boolean stopFlag = false;
 ////////////////////////////////////////////
 ///////////////////////////////////////////
@@ -219,10 +220,7 @@ void sensorRead () {
   Serial.println(distanceRight);
   Serial.print("Front Sensor: ");
   Serial.println(distanceFront);
-
-
 }
-
 
 void setup() {
   pinMode(motorEnableLeft, OUTPUT);
@@ -331,6 +329,9 @@ void loop() {
               delay(500);
                 results.value = 0xFFC23D;
         break ;
+          default:
+        break;
+
     }
     key_value = results.value; // store the value as key_value
     irrecv.resume(); // reset the receiver for the next code
