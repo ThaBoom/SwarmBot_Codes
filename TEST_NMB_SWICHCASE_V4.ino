@@ -48,10 +48,58 @@ IRrecv irrecv(irPin);
 decode_results results;
 unsigned long key_value = 0;
 boolean stopFlag = false;
-////////////////////////////////////////////
-///////////////////////////////////////////
 
-void stopCar_RED () {
+//Control IR numbers
+const long iRIN_ACTIVATION = 16761405;
+const long iRIN_botSTOP_R = 16724175;
+const long iRIN_botSTOP_G = 16718055;
+const long iRIN_botSTOP_B = 16743045;
+const long iRIN_botSTOP_RB = 16716015;
+const long iRIN_botSTOP_RG = 16726215;
+const long iRIN_botSTOP_BG = 16734885;
+const long iRIN_BUMP_LEFT = 16753245;
+const long iRIN_STALL = 16736925;
+const long iRIN_BUMP_RIGHT = 16769565;
+
+
+////Control IR numbers
+//const long iRIN_ACTIVATION = 0xFFC23D;
+//const long iRIN_botSTOP_R = 0xFF30CF;
+//const long iRIN_botSTOP_G = 0xFF18E7;
+//const long iRIN_botSTOP_B = 0xFF7A85;
+//const long iRIN_botSTOP_RB = 0xFF10EF;
+//const long iRIN_botSTOP_RG = 0xFF38C7;
+//const long iRIN_botSTOP_BG = 0xFF5AA5;
+//const long iRIN_BUMP_LEFT = 0xFFA25D;
+//const long iRIN_STALL = 0xFF629D;
+//const long iRIN_BUMP_RIGHT = 0xFFE21D;
+
+////Control IR numbers
+//#define iRIN_ACTIVATION = 16761405;
+//#define iRIN_botSTOP_R = 16724175;
+//#define iRIN_botSTOP_G = 16718055;
+//#define iRIN_botSTOP_B = 16743045;
+//#define iRIN_botSTOP_RB = 16716015;
+//#define iRIN_botSTOP_RG = 16726215;
+//#define iRIN_botSTOP_BG = 16734885;
+//#define iRIN_BUMP_LEFT = 16753245;
+//#define iRIN_STALL = 16736925;
+//#define iRIN_BUMP_RIGHT = 16769565;
+
+////Control IR numbers
+//#define iRIN_ACTIVATION = 0xFFC23D;
+//#define iRIN_botSTOP_R = 0xFF30CF;
+//#define iRIN_botSTOP_G = 0xFF18E7;
+//#define iRIN_botSTOP_B = 0xFF7A85;
+//#define iRIN_botSTOP_RB = 0xFF10EF;
+//#define iRIN_botSTOP_RG = 0xFF38C7;
+//#define iRIN_botSTOP_BG = 0xFF5AA5;
+//#define iRIN_BUMP_LEFT = 0xFFA25D;
+//#define iRIN_STALL = 0xFF629D;
+//#define iRIN_BUMP_RIGHT = 0xFFE21D;
+
+
+void botSTOP_RED () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -64,7 +112,7 @@ void stopCar_RED () {
   digitalWrite(NEOIO, LOW);
 }
 
-void stopCar_GREEN () {
+void botSTOP_GREEN () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -77,7 +125,7 @@ void stopCar_GREEN () {
   digitalWrite(NEOIO, LOW);
 }
 
-void stopCar_BLUE () {
+void botSTOP_BLUE () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -90,7 +138,7 @@ void stopCar_BLUE () {
   digitalWrite(NEOIO, LOW);
 }
 
-void stopCar_RED_BLUE () {
+void botSTOP_RED_BLUE () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -102,7 +150,7 @@ void stopCar_RED_BLUE () {
   digitalWrite(LEDred, HIGH);
   digitalWrite(NEOIO, LOW);
 }
-void stopCar_RED_GREEN () {
+void botSTOP_RED_GREEN () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -114,7 +162,7 @@ void stopCar_RED_GREEN () {
   digitalWrite(LEDred, HIGH);
   digitalWrite(NEOIO, LOW);
 }
-void stopCar_BLUE_GREEN () {
+void botSTOP_BLUE_GREEN () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -131,7 +179,7 @@ void stopCar_BLUE_GREEN () {
 
 /////////////////////////////////////////////////
 
-void goForwardFull () {
+void BOT_ForwardFull () {
   digitalWrite(motorForwardLeft, HIGH);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, HIGH);
@@ -144,7 +192,7 @@ void goForwardFull () {
   digitalWrite(NEOIO, HIGH);
 }
 
-void goLeft () {
+void BOT_Left () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, HIGH);
@@ -157,7 +205,7 @@ void goLeft () {
   digitalWrite(NEOIO, HIGH);
 }
 
-void goRight () {
+void BOT_Right () {
   digitalWrite(motorForwardLeft, HIGH);
   digitalWrite(motorBackLeft, LOW);
   digitalWrite(motorForwardRight, LOW);
@@ -170,7 +218,7 @@ void goRight () {
   digitalWrite(NEOIO, HIGH);
 }
 
-void goBack () {
+void BOT_Back () {
   digitalWrite(motorForwardLeft, LOW);
   digitalWrite(motorBackLeft, HIGH);
   digitalWrite(motorForwardRight, LOW);
@@ -182,9 +230,32 @@ void goBack () {
   digitalWrite(LEDred, LOW);
   digitalWrite(NEOIO, HIGH);
 }
-
-//////////////////////////////////////////////////
-///////////////////////////////////////////////////
+void BOT_ObstacleAvoidance (){
+      BOT_ForwardFull ();
+      sensorRead ();
+         if ((distanceFront <= minFrontDistance) || (distanceLeft <= minSideDistance) || (distanceRight <= minSideDistance)) {
+         if ((distanceLeft < stuckDistance) || (distanceRight < stuckDistance) || (distanceFront < stuckDistance)) {
+            BOT_Back();
+            delay(1.5*delayTime);
+            }
+            else if ((distanceFront <= minFrontDistance) && (distanceLeft <= minSideDistance) && (distanceRight <= minSideDistance)) {
+             BOT_Back();
+              delay(1.5*delayTime);
+            }
+            else if (distanceLeft > distanceRight ) {
+             BOT_Left();
+             delay(delayTime);
+           }
+           else if (distanceLeft <= distanceRight) {
+             BOT_Right();
+             delay(delayTime);
+            }
+           else
+              BOT_ForwardFull();
+           }
+           else
+             BOT_ForwardFull();
+}
 
 void sensorRead () {
   //Read front sensor value
@@ -220,7 +291,10 @@ void sensorRead () {
   Serial.println(distanceRight);
   Serial.print("Front Sensor: ");
   Serial.println(distanceFront);
+
+
 }
+
 
 void setup() {
   pinMode(motorEnableLeft, OUTPUT);
@@ -244,98 +318,85 @@ void setup() {
   Serial.begin(9600);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() {
   sensorRead();
   Serial.println(results.value);
-  if (irrecv.decode(&results)) { // decode the received signal and store it in results
-        irrecv.resume();
-    if (results.value == 0xFFFFFFFF) { // if the value is equal to 0xFFFFFFFF
-      results.value = key_value; // set the value to the key value
-      if (irrecv.decode(&results)) {
-    unsigned long res;
-    res = results.value, DEC;
-
-}
+  if (irrecv.decode(&results)) { 
+    irrecv.resume();
+//    if (results.value == 0xFFFFFFFF) { // if the value is equal to 0xFFFFFFFF
+//      results.value = key_value; // set the value to the key value
+//      if (irrecv.decode(&results)) {      //REPETE FUNCTION NOT NEEDED 
+//    unsigned long res;                    
+//    res = results.value, DEC;             // STILL WORKING THIS OUT... 
+//}
     }
     switch (results.value) { 
-  case 0xFFC23D:
+      case iRIN_ACTIVATION:
         Serial.println("BOT ACTIVATION");
-        if ((distanceFront <= minFrontDistance) || (distanceLeft <= minSideDistance) || (distanceRight <= minSideDistance)) {
-         if ((distanceLeft < stuckDistance) || (distanceRight < stuckDistance) || (distanceFront < stuckDistance)) {
-            goBack();
-            delay(1.5*delayTime);
-            }
-            else if ((distanceFront <= minFrontDistance) && (distanceLeft <= minSideDistance) && (distanceRight <= minSideDistance)) {
-             goBack();
-              delay(1.5*delayTime);
-            }
-            else if (distanceLeft > distanceRight ) {
-             goLeft();
-             delay(delayTime);
-           }
-           else if (distanceLeft <= distanceRight) {
-             goRight();
-             delay(delayTime);
-            }
-           else
-              goForwardFull();
-           }
-           else
-             goForwardFull();
+           if(stopFlag){
+            stopFlag = false; 
+       BOT_ObstacleAvoidance ();
+           }else{
+            stopFlag = true;
                break;
         
-      case 0xFF30CF:
-        Serial.println("stopCar_RED");
-            stopCar_RED();
+      case iRIN_botSTOP_R:
+        Serial.println("botSTOP_RED");
+            botSTOP_RED();
         break;
         
-      case 0xFF18E7:
-        Serial.println("stopCar_GREEN");
-            stopCar_GREEN();
+      case iRIN_botSTOP_G:
+        Serial.println("botSTOP_GREEN");
+            botSTOP_GREEN();
         break;
         
-      case 0xFF7A85:
-        Serial.println("stopCar_BLUE");
-           stopCar_BLUE();
+      case iRIN_botSTOP_B:
+        Serial.println("botSTOP_BLUE");
+           botSTOP_BLUE();
         break;
         
-      case 0xFF10EF:
-        Serial.println("stopCar_RED_BLUE");
-           stopCar_RED_BLUE();
+      case iRIN_botSTOP_RB:
+        Serial.println("botSTOP_RED_BLUE");
+           botSTOP_RED_BLUE();
         break ;
         
-      case 0xFF38C7:
-        Serial.println("stopCar_RED_GREEN");
-            stopCar_RED_GREEN();
+      case iRIN_botSTOP_RG:
+        Serial.println("botSTOP_RED_GREEN");
+            botSTOP_RED_GREEN();
         break ;
         
-      case 0xFF5AA5:
-        Serial.println("stopCar_BLUE_GREEN");
-            stopCar_BLUE_GREEN();
+      case iRIN_botSTOP_BG:
+        Serial.println("botSTOP_BLUE_GREEN");
+            botSTOP_BLUE_GREEN();
         break ;
         
-      case 0xFFA25D:
-        Serial.println("BUMP_LEFT");
-            goLeft();
+      case iRIN_BUMP_LEFT:
+        Serial.println("BOT_BUMP_LEFT");
+            BOT_Left();
              delay(500);
+              results.value = iRIN_ACTIVATION;
         break ;
         
-      case 0xFFE21D:
-        Serial.println("BUMP_RIGHT");
-            goRight();
+      case iRIN_BUMP_RIGHT:
+        Serial.println("BOT_BUMP_RIGHT");
+            BOT_Right();
               delay(500);
+                results.value = iRIN_ACTIVATION;
         break ;
 
-      case 0xFF629D:
-        Serial.println("STALL");
-            goBack();
+      case iRIN_STALL:
+        Serial.println("BOT_STALL");
+            BOT_Back();
               delay(500);
+                 results.value = iRIN_ACTIVATION;
         break ;
           default:
         break;
-
     }
+    
     key_value = results.value; // store the value as key_value
     irrecv.resume(); // reset the receiver for the next code
   }
