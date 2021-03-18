@@ -266,21 +266,27 @@ void loop() {
         break;
         
       case iRIN_BUMP_LEFT:
-        Serial.println("BOT_BUMP_LEFT");
-        BOT_Left();
-        delay(500);
+        if ( runFlag ) {
+          Serial.println("BOT_BUMP_LEFT");
+          BOT_Left();
+          delay(500);
+        }
         break;
         
       case iRIN_BUMP_RIGHT:
-        Serial.println("BOT_BUMP_RIGHT");
-        BOT_Right();
-        delay(500);
+        if ( runFlag ) {
+          Serial.println("BOT_BUMP_RIGHT");
+          BOT_Right();
+          delay(500);
+        }
         break;
 
       case iRIN_STALL:
-        Serial.println("BOT_STALL");
-        BOT_Back();
-        delay(500);
+        if ( runFlag ) {
+          Serial.println("BOT_STALL");
+          BOT_Back();
+          delay(500);
+        }
         break;
 
       default:
