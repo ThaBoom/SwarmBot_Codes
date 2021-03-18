@@ -335,7 +335,7 @@ void loop() {
         if ( runFlag ) {
           Serial.println("NOPE_LEFT");
           BOT_NOPE_LEFT();
-          delay (300);
+          delay (350);
         }
         break;
 
@@ -343,7 +343,7 @@ void loop() {
         if ( runFlag ) {
           Serial.println("NOOOOPE");
           BOT_NOPE_BACK();
-          delay (700);
+          delay (800);
         }
         break;
 
@@ -351,7 +351,7 @@ void loop() {
         if ( runFlag ) {
           Serial.println("NOPE_RIGHT");
           BOT_NOPE_RIGHT();
-          delay (300);
+          delay (350);
         }
         break;
 
