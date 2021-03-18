@@ -26,6 +26,12 @@ const int LEDred = 13;
 const int LEDgreen = A2;
 const int LEDblue = A3;
 
+enum Color : int {
+  RED   = 1,
+  GREEN = 2,
+  BLUE  = 4
+};
+
 //Variables for the Motors
 const int leftMotorSpeed = 255;
 const int rightMotorSpeed = 255;
@@ -71,17 +77,19 @@ void stop() {
   runFlag = false;
 }
 
-void setLEDs(bool blueValue, bool greenValue, bool redValue, bool neoValue) {
-  digitalWrite(LEDblue, blueValue);
-  digitalWrite(LEDgreen, greenValue);
-  digitalWrite(LEDred, redValue);
+// colorValue should be a bitwise combination of Color values, such as
+// ( RED | BLUE ) for red and blue
+void setLEDs(int colorValue, bool neoValue) {
+  digitalWrite(LEDblue, BLUE & colorValue);
+  digitalWrite(LEDgreen, GREEN & colorValue);
+  digitalWrite(LEDred, RED & colorValue);
   digitalWrite(NEOIO, neoValue);
 }
 
 
-void stopAndSetLEDs(bool blueValue, bool greenValue, bool redValue) {
+void stopAndSetLEDs(int colorValue) {
   stop();
-  setLEDs(blueValue, greenValue, redValue, false);
+  setLEDs(colorValue, false);
 }
 
 /////////////////////////////////////////////////
@@ -93,7 +101,7 @@ void BOT_ForwardFull () {
   digitalWrite(motorBackRight, LOW);
   analogWrite(motorEnableLeft, leftMotorSpeed);
   analogWrite(motorEnableRight, rightMotorSpeed);
-  setLEDs(true, true, true, true);
+  setLEDs(RED | GREEN | BLUE, true);
 }
 
 void BOT_Left () {
@@ -103,7 +111,7 @@ void BOT_Left () {
   digitalWrite(motorBackRight, LOW);
   analogWrite(motorEnableLeft, 0);
   analogWrite(motorEnableRight, rightMotorSpeed);
-  setLEDs(false, true, false, true);
+  setLEDs(GREEN, true);
 }
 
 void BOT_Right () {
@@ -113,7 +121,7 @@ void BOT_Right () {
   digitalWrite(motorBackRight, LOW);
   analogWrite(motorEnableLeft, leftMotorSpeed);
   analogWrite(motorEnableRight, 0);
-  setLEDs(false, true, false, true);
+  setLEDs(GREEN, true);
 }
 
 void BOT_Back () {
@@ -123,7 +131,7 @@ void BOT_Back () {
   digitalWrite(motorBackRight, HIGH);
   analogWrite(motorEnableLeft, leftMotorSpeed);
   analogWrite(motorEnableRight, rightMotorSpeed);
-  setLEDs(true, false, false, true);
+  setLEDs(BLUE, true);
 }
 
 void BOT_ObstacleAvoidance (){
@@ -226,36 +234,35 @@ void loop() {
         Serial.println("BOT ACTIVATION");
         runFlag = true;
         break;
-      
-      // LED argument order: blue, green, red
+
       case iRIN_botSTOP_R:
         Serial.println("botSTOP_RED");
-        stopAndSetLEDs(false, false, true);
+        stopAndSetLEDs(RED);
         break;
         
       case iRIN_botSTOP_G:
         Serial.println("botSTOP_GREEN");
-        stopAndSetLEDs(false, true, false);
+        stopAndSetLEDs(GREEN);
         break;
         
       case iRIN_botSTOP_B:
         Serial.println("botSTOP_BLUE");
-        stopAndSetLEDs(true, false, false);
+        stopAndSetLEDs(BLUE);
         break;
         
       case iRIN_botSTOP_RB:
         Serial.println("botSTOP_RED_BLUE");
-        stopAndSetLEDs(true, false, true);
+        stopAndSetLEDs(RED | BLUE);
         break;
         
       case iRIN_botSTOP_RG:
         Serial.println("botSTOP_RED_GREEN");
-        stopAndSetLEDs(false, true, true);
+        stopAndSetLEDs(RED | GREEN);
         break;
         
       case iRIN_botSTOP_BG:
         Serial.println("botSTOP_BLUE_GREEN");
-        stopAndSetLEDs(true, true, false);
+        stopAndSetLEDs(BLUE | GREEN);
         break;
         
       case iRIN_BUMP_LEFT:
