@@ -271,7 +271,7 @@ void setup() {
 
 void loop() {
   if (runFlag && (millis() - activationTime) > timeout_ms) {
-    stop();
+        stopAndSetLEDs(RED | GREEN | BLUE, true);
   }
 
   if (irrecv.decode(&results)) {
