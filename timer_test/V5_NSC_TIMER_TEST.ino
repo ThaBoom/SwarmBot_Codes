@@ -66,8 +66,7 @@ unsigned long current_code = 0;
 boolean runFlag = false;
 
 // TIMER
-unsigned long currentTime=0;
-unsigned long previousTime=0;
+unsigned long activationTime = 0;
 
 //Control IR numbers
 const long iRIN_ACTIVATION = 16761405;
@@ -181,9 +180,6 @@ void BOT_NOPE_RIGHT () {
 }
 
 void BOT_ObstacleAvoidance (){
-  currentTime=millis();
-  if((currentTime-previousTime)>3000){
-    previousTime=currentTime;
   
   BOT_ForwardFull();
   sensorRead ();
@@ -208,7 +204,6 @@ void BOT_ObstacleAvoidance (){
       BOT_Right();
       delay(delayTime);
     }
-      }
   }
 }
 
@@ -274,6 +269,10 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() {
+  if (runFlag && (millis() - activationTime) > 3000) {
+    runFlag = false;
+  }
+
   if (irrecv.decode(&results)) {
     current_code = results.value;
     Serial.print("New code received: ");
@@ -284,6 +283,7 @@ void loop() {
       case iRIN_ACTIVATION:
         Serial.println("BOT ACTIVATION");
         runFlag = true;
+        activationTime = millis();
         break;
 
       case iRIN_botSTOP_R:
