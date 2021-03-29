@@ -270,7 +270,7 @@ void setup() {
 
 void loop() {
   if (runFlag && (millis() - activationTime) > 3000) {
-    runFlag = false;
+    stop();
   }
 
   if (irrecv.decode(&results)) {
