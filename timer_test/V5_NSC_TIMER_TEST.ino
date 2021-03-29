@@ -67,6 +67,7 @@ boolean runFlag = false;
 
 // TIMER
 unsigned long activationTime = 0;
+unsigned long timeout_ms = 10000;
 
 //Control IR numbers
 const long iRIN_ACTIVATION = 16761405;
@@ -269,7 +270,7 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void loop() {
-  if (runFlag && (millis() - activationTime) > 3000) {
+  if (runFlag && (millis() - activationTime) > timeout_ms) {
     stop();
   }
 
