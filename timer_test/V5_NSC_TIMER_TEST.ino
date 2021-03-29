@@ -3,6 +3,16 @@
 // MULTI PLAYER RECEIVER CODE
 // BUMP CODE 
 // UPDATED TO SWICH/CASE FORMAT
+//////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+// CONCEPT AND DESIGN BY: Nolan Cash
+// WRITEN BY: Nolan Cash
+// CoWRITEN BY: Andy Tracy
+// SPECIAL THANKS TO:
+//      Justus Stahler
+//      Christian Restifo
+//      CW Kreimer
+//      Steve Owens 
 // See SwarmBots.online for more info // 
 
 //Pin numbers definition
@@ -55,6 +65,10 @@ decode_results results;
 unsigned long current_code = 0;
 boolean runFlag = false;
 
+// TIMER
+unsigned long currentTime=0;
+unsigned long previousTime=0;
+
 //Control IR numbers
 const long iRIN_ACTIVATION = 16761405;
 const long iRIN_botSTOP_R =  16724175;
@@ -66,6 +80,9 @@ const long iRIN_botSTOP_BG = 16734885;
 const long iRIN_BUMP_LEFT =  16753245;
 const long iRIN_STALL =      16736925;
 const long iRIN_BUMP_RIGHT = 16769565;
+const long iRIN_NOPE_LEFT =  16769055;
+const long iRIN_NOPE_BACK  = 16754775;
+const long iRIN_NOPE_RIGHT = 16748655;
 
 void stop() {
   digitalWrite(motorForwardLeft, LOW);
@@ -85,7 +102,6 @@ void setLEDs(int colorValue, bool neoValue) {
   digitalWrite(LEDred, RED & colorValue);
   digitalWrite(NEOIO, neoValue);
 }
-
 
 void stopAndSetLEDs(int colorValue) {
   stop();
@@ -134,7 +150,41 @@ void BOT_Back () {
   setLEDs(BLUE, true);
 }
 
+void BOT_NOPE_LEFT () {
+  digitalWrite(motorForwardLeft, LOW);
+  digitalWrite(motorBackLeft, HIGH);
+  digitalWrite(motorForwardRight, HIGH);
+  digitalWrite(motorBackRight, LOW);
+  analogWrite(motorEnableLeft, leftMotorSpeed);
+  analogWrite(motorEnableRight, rightMotorSpeed);
+  setLEDs(RED | GREEN, true);
+}
+
+void BOT_NOPE_BACK () {
+  digitalWrite(motorForwardLeft, LOW);
+  digitalWrite(motorBackLeft, HIGH);
+  digitalWrite(motorForwardRight, HIGH);
+  digitalWrite(motorBackRight, LOW);
+  analogWrite(motorEnableLeft, leftMotorSpeed);
+  analogWrite(motorEnableRight, rightMotorSpeed);
+  setLEDs(RED | BLUE, true);
+}
+
+void BOT_NOPE_RIGHT () {
+  digitalWrite(motorForwardLeft, HIGH);
+  digitalWrite(motorBackLeft, LOW);
+  digitalWrite(motorForwardRight, LOW);
+  digitalWrite(motorBackRight, HIGH);
+  analogWrite(motorEnableLeft, leftMotorSpeed);
+  analogWrite(motorEnableRight, rightMotorSpeed);
+  setLEDs(RED | GREEN, true);
+}
+
 void BOT_ObstacleAvoidance (){
+  currentTime=millis();
+  if((currentTime-previousTime)>3000){
+    previousTime=currentTime;
+  
   BOT_ForwardFull();
   sensorRead ();
 
@@ -158,6 +208,7 @@ void BOT_ObstacleAvoidance (){
       BOT_Right();
       delay(delayTime);
     }
+      }
   }
 }
 
@@ -286,6 +337,30 @@ void loop() {
           Serial.println("BOT_STALL");
           BOT_Back();
           delay(500);
+        }
+        break;
+
+      case iRIN_NOPE_LEFT:
+        if ( runFlag ) {
+          Serial.println("NOPE_LEFT");
+          BOT_NOPE_LEFT();
+          delay (350);
+        }
+        break;
+
+      case iRIN_NOPE_BACK:
+        if ( runFlag ) {
+          Serial.println("NOOOOPE");
+          BOT_NOPE_BACK();
+          delay (800);
+        }
+        break;
+
+      case iRIN_NOPE_RIGHT:
+        if ( runFlag ) {
+          Serial.println("NOPE_RIGHT");
+          BOT_NOPE_RIGHT();
+          delay (350);
         }
         break;
 
