@@ -61,7 +61,8 @@ const int stuckDistance = 10;
 //Variables for IR Sensor
 #define DECODE_NEC
 #include <IRremote.h>
-IrReceiver IrReceiver(irPin);     // NEW
+
+//IrReceiver.begin(irPin, ENABLE_LED_FEEDBACK);     // NEW
 //IRrecv irrecv(irPin); `         //////////////////////////////////////////////////////////////////
 //decode_results results;         /////////////////////////////////////////////////////////////////
 unsigned long current_code = 0;
@@ -185,7 +186,7 @@ void BOT_NOPE_RIGHT () {
 void BOT_ObstacleAvoidance (){
   
   BOT_ForwardFull();
-  sensorRead ();
+  sensorRead();
 
   if ((distanceFront <= minFrontDistance) ||
       (distanceLeft <= minSideDistance) ||
@@ -247,6 +248,8 @@ void sensorRead () {
 }
 
 void setup() {
+  
+  IrReceiver.begin(irPin, ENABLE_LED_FEEDBACK);     // NEW
   pinMode(motorEnableLeft, OUTPUT);
   pinMode(motorForwardLeft, OUTPUT);
   pinMode(motorBackLeft, OUTPUT);
@@ -264,7 +267,7 @@ void setup() {
   pinMode(LEDblue, OUTPUT);
   pinMode(NEOIO, OUTPUT);
   
-  irrecv.enableIRIn();                // unedited ////////////////////////////////////
+  IrReceiver.enableIRIn();                // unedited ////////////////////////////////////
   Serial.begin(9600);
 }
 
@@ -273,12 +276,12 @@ void setup() {
 
 void loop() {
   if (runFlag && (millis() - activationTime) > timeout_ms) {
-        stopAndSetLEDs(RED | GREEN | BLUE, true);
+        stopAndSetLEDs(RED | GREEN | BLUE);
   }
 
-  if (IrReceiver.decode())
+  if (IrReceiver.decode()){
 //  if (irrecv.decode(&results)) {
-    current_code = results.value;
+    current_code = IrReceiver.decodedIRData.command;
     Serial.print("New code received: ");
     Serial.println(current_code);
     IrReceiver.resume();                          //NEW ///////////////////////////////////
