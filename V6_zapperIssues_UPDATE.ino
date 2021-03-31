@@ -62,9 +62,6 @@ const int stuckDistance = 10;
 #define DECODE_NEC
 #include <IRremote.h>
 
-//IrReceiver.begin(irPin, ENABLE_LED_FEEDBACK);     // NEW
-//IRrecv irrecv(irPin); `         //////////////////////////////////////////////////////////////////
-//decode_results results;         /////////////////////////////////////////////////////////////////
 unsigned long current_code = 0;
 boolean runFlag = false;
 
@@ -280,12 +277,10 @@ void loop() {
   }
 
   if (IrReceiver.decode()){
-//  if (irrecv.decode(&results)) {
-    current_code = IrReceiver.decodedIRData.command;
+    current_code = IrReceiver.decodedIRData.decodedRawData;
     Serial.print("New code received: ");
     Serial.println(current_code);
-    IrReceiver.resume();                          //NEW ///////////////////////////////////
-//    irrecv.resume();
+    IrReceiver.resume();                          //NEW //////////////////////////////////
 
     switch (current_code) { 
       case iRIN_ACTIVATION:
